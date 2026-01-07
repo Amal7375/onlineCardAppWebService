@@ -19,12 +19,16 @@ const dbConfig = {
 const app = express();
 app.use(express.json());
 
-// Create a connection pool
-const pool = mysql.createPool(dbConfig);
+// Start Server
+
+app.listen(port, () => {
+    console.log(`Server started on port ${port}`);
+});
 
 app.get('/allcards', async (req, res) => {
     try {
-        const [rows] = await pool.execute('SELECT * FROM card');
+        let connection = await mysql.createConnection(dbConfig);
+        const[rows] = await connection.execute('SELECT * FROM defaultdb.cards');
         res.json(rows);
     } catch (err) {
         console.error(err);
@@ -32,6 +36,3 @@ app.get('/allcards', async (req, res) => {
     }
 });
 
-app.listen(port, () => {
-    console.log(`Server started on port ${port}`);
-});
